@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `User` MODIFY `hash` VARCHAR(256) NOT NULL DEFAULT '';

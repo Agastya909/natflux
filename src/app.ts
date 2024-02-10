@@ -1,9 +1,12 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import { AuthRouter, UserRouter, VideoRouter } from "./routes";
 
 const app = express();
 
-app.get("/", (res: Response, req: Request) => {
-  res.send("hello world");
-});
+app.use(express.json());
+
+app.use("/auth", AuthRouter);
+app.use("/user", UserRouter);
+app.use("/video", VideoRouter);
 
 export { app };

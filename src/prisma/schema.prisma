@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  name       String   @db.VarChar(64)
+  email      String   @unique(map: "email") @db.VarChar(96)
+  hash       String   @default("") @db.VarChar(256)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model VideoDetails {
+  id           String   @id @default(uuid())
+  title        String   @unique(map: "title") @db.VarChar(64)
+  summary      String   @db.VarChar(256)
+  genre        String   @db.VarChar(256)
+  path         String   @db.VarChar(1024)
+  length       Int
+  release_date DateTime @db.Date
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
