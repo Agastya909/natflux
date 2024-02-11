@@ -17,15 +17,24 @@ async function getVideoById(req: Request, res: Response, next: NextFunction) {
 
 async function addVideo(req: Request, res: Response, next: NextFunction) {
   try {
-    const required = ["title", "summary", "genre", "path", "length", "release_date"];
+    const required = ["title", "summary", "genre", "release_date"];
     const validate = Validation.ValidateRequiredFields(req.body, required);
     if (!validate) return res.status(400).send("All are required : " + required);
-
+    const { title, summary, genre, release_date } = req.body;
+    const filepath = res.locals.filePath;
     const isExistingTitle = await VideoService.getVideoByTitle(req.body.title);
     if (isExistingTitle) return res.status(400).send(MESSAGES.Video.TITLE_IN_USE);
 
-    const videoData = req.body;
-    const videoRes = await VideoService.addVideoDetails(videoData);
+    const videoRes = await VideoService.addVideoDetails({
+      title: title,
+      genre: genre,
+      length: res.locals.videoDuration,
+      path: filepath,
+      release_date: release_date,
+      summary: summary,
+      thumbnail_path: "/home/agastya/Entertainment/test.png"
+      // put an actual thumbnail path here by generating random screenshot and storing them to disk using fs
+    });
     res.status(200).json({
       message: MESSAGES.Video.VIDEO_ADDED,
       data: videoRes

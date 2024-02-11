@@ -17,13 +17,14 @@ model User {
 }
 
 model VideoDetails {
-  id           String   @id @default(uuid())
-  title        String   @unique(map: "title") @db.VarChar(64)
-  summary      String   @db.VarChar(256)
-  genre        String   @db.VarChar(256)
-  path         String   @db.VarChar(1024)
-  length       Int
-  release_date DateTime @db.Date
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  id             String   @id @default(uuid())
+  title          String   @unique(map: "title") @db.VarChar(64)
+  summary        String   @db.VarChar(256)
+  genre          String   @db.VarChar(256)
+  path           String   @db.VarChar(1024)
+  thumbnail_path String   @db.VarChar(1024)
+  length         Int
+  release_date   String   @db.TinyText()
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 }

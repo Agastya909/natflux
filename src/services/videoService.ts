@@ -8,6 +8,7 @@ type VideoDetails = {
   path: string;
   length: number;
   release_date: string;
+  thumbnail_path: string;
 };
 
 async function getVideoById(id: string) {
@@ -26,7 +27,8 @@ async function addVideoDetails(params: VideoDetails) {
       genre: params.genre,
       path: params.path,
       length: params.length,
-      release_date: params.release_date
+      release_date: params.release_date,
+      thumbnail_path: params.thumbnail_path
     }
   });
 }

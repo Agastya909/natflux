@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h2>Hello world</h2>
+    <p>Choose file to uplaod</p>
+    <form action="/video/add" method="POST" enctype="multipart/form-data" id="form">
+      <input type="text" name="title" required placeholder="title" />
+      <input type="text" name="genre" required placeholder="genre" />
+      <input type="text" name="release_date" required placeholder="release_date" />
+      <input type="text" name="summary" required placeholder="summary" />
+      <input type="file" name="file" required />
+      <button type="submit">Upload</button>
+    </form>
+  </body>
+</html>

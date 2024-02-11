@@ -32,5 +32,9 @@ export default {
   },
   VideoData: {
     NO_ID: "Video ID is required"
+  },
+  File: {
+    DELETED: "File deleted",
+    NOT_DELETED: "File not deleted"
   }
 };
