@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { VideoService } from "../services/index";
 import { MESSAGES } from "../constants";
 import { Validation } from "../utils";
+import fs from "fs";
 
 async function getVideoById(req: Request, res: Response, next: NextFunction) {
   try {
@@ -43,4 +44,36 @@ async function addVideo(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export default { getVideoById, addVideo };
+async function sendVideoStream(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (!req.params.id) return res.status(400).send(MESSAGES.VideoData.NO_ID);
+    const videoId = req.params.id;
+    const videoData = await VideoService.getVideoById(videoId);
+    if (!videoData) return res.status(404).send(MESSAGES.Video.NO_VIDEO);
+
+    const { path } = videoData;
+    const fileStat = fs.statSync(path);
+    const fileSize = fileStat.size;
+    const range = req.headers.range;
+    if (!range) return res.status(400).send(MESSAGES.HTTP_RESPONSES.BAD_REQUEST);
+
+    const CHUNK_SIZE = 12 ** 6;
+    const start = Number(range.replace(/\D/g, ""));
+    const end = Math.min(start + CHUNK_SIZE, fileSize - 1);
+    const contentLength = end - start + 1;
+    const customHeaders = {
+      "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": contentLength,
+      "Content-Type": "video/mp4"
+    };
+    const fileStream = fs.createReadStream(path, { start, end });
+    res.writeHead(206, customHeaders);
+    fileStream.pipe(res);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(MESSAGES.Video.ERROR);
+  }
+}
+
+export default { getVideoById, addVideo, sendVideoStream };

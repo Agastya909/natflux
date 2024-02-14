@@ -22,13 +22,15 @@ export default {
   },
   HTTP_RESPONSES: {
     UNAUTHORISED: "Unauthorised",
-    SERVER_ERROR: "Server Error"
+    SERVER_ERROR: "Server Error",
+    BAD_REQUEST: "Bad Request, check payloads."
   },
   Video: {
     VIDEO_FOUND: "Video found",
     NO_VIDEO: "No video found",
     TITLE_IN_USE: "A video with title already exist",
-    VIDEO_ADDED: "Video added successfully"
+    VIDEO_ADDED: "Video added successfully",
+    ERROR: "Error playing this video"
   },
   VideoData: {
     NO_ID: "Video ID is required"

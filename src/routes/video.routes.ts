@@ -15,5 +15,6 @@ router.post(
   FfmpegMiddleware.getRandomThumbnail,
   VideoController.addVideo
 );
+router.get("/:id/play", VideoController.sendVideoStream);
 
 export default router;
