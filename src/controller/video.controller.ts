@@ -24,7 +24,7 @@ async function addVideo(req: Request, res: Response, next: NextFunction) {
     const filepath = res.locals.filePath;
     const isExistingTitle = await VideoService.getVideoByTitle(req.body.title);
     if (isExistingTitle) return res.status(400).send(MESSAGES.Video.TITLE_IN_USE);
-
+    // add column for uploader_user_id
     const videoRes = await VideoService.addVideoDetails({
       title: title,
       genre: genre,
@@ -32,8 +32,7 @@ async function addVideo(req: Request, res: Response, next: NextFunction) {
       path: filepath,
       release_date: release_date,
       summary: summary,
-      thumbnail_path: "/home/agastya/Entertainment/test.png"
-      // put an actual thumbnail path here by generating random screenshot and storing them to disk using fs
+      thumbnail_path: res.locals.thumbnailPath
     });
     res.status(200).json({
       message: MESSAGES.Video.VIDEO_ADDED,

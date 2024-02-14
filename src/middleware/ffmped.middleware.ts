@@ -5,7 +5,7 @@ import { Helpers } from "../utils";
 
 function getVideoDuration(req: Request, res: Response, next: NextFunction) {
   const filePath = req.file?.path || req.body.path;
-  if (!filePath) return res.status(500).send("File save path error");
+  if (!filePath) return res.status(500).send("Get Duration: File path error");
   ffmpeg.ffprobe(filePath, (error, data) => {
     if (error) res.status(500).send(MESSAGES.HTTP_RESPONSES.SERVER_ERROR);
     if (data && data.format && data.format.duration) {
@@ -20,4 +20,18 @@ function getVideoDuration(req: Request, res: Response, next: NextFunction) {
   });
 }
 
-export default { getVideoDuration };
+function getRandomThumbnail(req: Request, res: Response, next: NextFunction) {
+  const filePath = res.locals.filePath;
+  console.log(filePath);
+  if (!filePath) return res.status(500).send("Create Thumbnail: File path error");
+  const thumbnailName = req.body.title + "_thumbnail" + ".png";
+  ffmpeg({ source: filePath }).screenshot({
+    timestamps: [res.locals.videoDuration / 5],
+    folder: "/home/agastya/Entertainment/",
+    filename: thumbnailName
+  });
+  res.locals.thumbnailPath = "/home/agastya/Entertainment/" + thumbnailName;
+  next();
+}
+
+export default { getVideoDuration, getRandomThumbnail };

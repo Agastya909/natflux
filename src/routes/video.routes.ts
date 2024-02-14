@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { VideoController } from "../controller/index";
-import { AuthMiddleware, FfmpedMiddleware } from "../middleware";
+import { AuthMiddleware, FfmpegMiddleware } from "../middleware";
 import { MulterUpload } from "../utils";
 
 const router = Router();
@@ -11,7 +11,8 @@ router.get("/:id", VideoController.getVideoById);
 router.post(
   "/add",
   MulterUpload.single("file"),
-  FfmpedMiddleware.getVideoDuration,
+  FfmpegMiddleware.getVideoDuration,
+  FfmpegMiddleware.getRandomThumbnail,
   VideoController.addVideo
 );
 
