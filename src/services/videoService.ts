@@ -6,9 +6,11 @@ type VideoDetails = {
   summary: string;
   genre: string;
   path: string;
+  size: number;
   length: number;
   release_date: string;
   thumbnail_path: string;
+  uploader_id: string;
 };
 
 async function getVideoById(id: string) {
@@ -26,11 +28,20 @@ async function addVideoDetails(params: VideoDetails) {
       summary: params.summary,
       genre: params.genre,
       path: params.path,
+      size: params.size,
       length: params.length,
       release_date: params.release_date,
-      thumbnail_path: params.thumbnail_path
+      thumbnail_path: params.thumbnail_path,
+      uploader_id: params.uploader_id
     }
   });
 }
 
-export default { getVideoById, getVideoByTitle, addVideoDetails };
+const getVideos = async (limit: number, offset: number) => {
+  return Prisma.videoDetails.findMany({
+    skip: offset,
+    take: limit
+  });
+};
+
+export default { getVideoById, getVideoByTitle, addVideoDetails, getVideos };

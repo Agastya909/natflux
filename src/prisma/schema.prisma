@@ -8,22 +8,26 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  name       String   @db.VarChar(64)
-  email      String   @unique(map: "email") @db.VarChar(96)
-  hash       String   @default("") @db.VarChar(256)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id           String         @id @default(uuid())
+  name         String         @db.VarChar(64)
+  email        String         @unique(map: "email") @db.VarChar(96)
+  hash         String         @default("") @db.VarChar(256)
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  VideoDetails VideoDetails[]
 }
 
 model VideoDetails {
   id             String   @id @default(uuid())
   title          String   @unique(map: "title") @db.VarChar(64)
   summary        String   @db.VarChar(256)
+  uploader       User     @relation(fields: [uploader_id], references: [id])
+  uploader_id    String
   genre          String   @db.VarChar(256)
   path           String   @db.VarChar(1024)
   thumbnail_path String   @db.VarChar(1024)
   length         Int
+  size           Int
   release_date   String   @db.TinyText()
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt

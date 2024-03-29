@@ -37,10 +37,12 @@ async function loginUser(req: Request, res: Response, next: NextFunction) {
     if (!Validation.ValidateEmail(body.email)) {
       return res.status(400).send(MESSAGES.UserData.INVALID_EMAIL_FORMAT);
     }
-    const userData = await UserService.getUserByEmail(body.email);
-    if (!userData) return res.status(404).send(MESSAGES.User.NO_USER);
-    const isCorrectPW = await Hashing.ComparePassword(body.password, userData.hash);
+    const userDataResp = await UserService.getUserByEmail(body.email);
+    if (!userDataResp) return res.status(404).send(MESSAGES.User.NO_USER);
+    const isCorrectPW = await Hashing.ComparePassword(body.password, userDataResp.hash);
     if (!isCorrectPW) return res.status(401).send(MESSAGES.UserData.INCORRECT_PW);
+    const { hash, created_at, updated_at, ...userData } = userDataResp;
+    console.log(userData);
     res.locals.data = userData;
     res.locals.message = MESSAGES.User.USER_FOUND;
     next();
@@ -82,4 +84,18 @@ async function resetPassword(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export default { createUser, loginUser, resetPassword };
+const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = res.locals.jwt;
+    const userData = await UserService.getUserByEmail(email);
+    if (!userData) return res.status(404).send(MESSAGES.User.NO_USER);
+    return res.status(200).json({
+      message: MESSAGES.User.USER_FOUND,
+      data: userData
+    });
+  } catch (error) {
+    res.status(500).send(MESSAGES.HTTP_RESPONSES.SERVER_ERROR);
+  }
+};
+
+export default { createUser, loginUser, resetPassword, getCurrentUser };

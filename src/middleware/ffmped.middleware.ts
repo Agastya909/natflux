@@ -14,6 +14,7 @@ function getVideoDuration(req: Request, res: Response, next: NextFunction) {
         return res.status(500).send("File duration error");
       }
       res.locals.videoDuration = data.format.duration;
+      res.locals.videoSize = data.format.size;
       res.locals.filePath = filePath;
       next();
     }
@@ -34,4 +35,18 @@ function getRandomThumbnail(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export default { getVideoDuration, getRandomThumbnail };
+function getFileMetaData(req: Request, res: Response, next: NextFunction) {
+  const filePath = res.locals.filePath;
+  console.log(filePath);
+  if (!filePath) return res.status(500).send("Get file meta data: File path error");
+  ffmpeg.ffprobe(filePath, (error, data) => {
+    if (error) res.status(500).send(MESSAGES.HTTP_RESPONSES.SERVER_ERROR);
+    if (data && data.format) {
+      res.locals.videoSize = data.format.size;
+      console.log(data.format);
+      next();
+    }
+  });
+}
+
+export default { getVideoDuration, getRandomThumbnail, getFileMetaData };

@@ -10,8 +10,11 @@ function signJWT(req: Request, res: Response, next: NextFunction) {
 
   if (!JWT_SECRET) return res.status(500).send(MESSAGES.HTTP_RESPONSES.SERVER_ERROR);
 
-  jwt.sign(email, JWT_SECRET, { algorithm: "RS256", expiresIn: 24 * 60 * 60 }, (error, token) => {
-    if (error) return res.status(500).send(MESSAGES.JWT.NOT_SIGNED);
+  jwt.sign({ email }, JWT_SECRET, { algorithm: "RS256", expiresIn: 24 * 60 * 60 }, (error, token) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send(MESSAGES.JWT.NOT_SIGNED);
+    }
     res.status(200).json({
       message: res.locals.message,
       data: res.locals.data,

@@ -30,7 +30,8 @@ export default {
     NO_VIDEO: "No video found",
     TITLE_IN_USE: "A video with title already exist",
     VIDEO_ADDED: "Video added successfully",
-    ERROR: "Error playing this video"
+    ERROR: "Error playing this video",
+    ERROR_HOME: "Could not fetch video list for home"
   },
   VideoData: {
     NO_ID: "Video ID is required"

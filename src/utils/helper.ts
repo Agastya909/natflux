@@ -7,5 +7,18 @@ function RemoveFile(path: string) {
     return MESSAGES.File.DELETED;
   });
 }
+function CreateImageBase64(path: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, (err, data) => {
+      if (err) {
+        reject("Error reading image file");
+      } else {
+        const base64Image = Buffer.from(data).toString("base64");
+        const dataUrl = `data:image/png;base64,${base64Image}`;
+        resolve(dataUrl);
+      }
+    });
+  });
+}
 
-export default { RemoveFile };
+export default { RemoveFile, CreateImageBase64 };

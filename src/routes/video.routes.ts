@@ -5,9 +5,11 @@ import { MulterUpload } from "../utils";
 
 const router = Router();
 
-router.use(AuthMiddleware.verifyJWT);
+// router.use(AuthMiddleware.verifyJWT);
 
-router.get("/:id", VideoController.getVideoById);
+router.get("/home", VideoController.getHomeFeed);
+
+router.get("/:id", VideoController.getVideoById, FfmpegMiddleware.getFileMetaData);
 router.post(
   "/add",
   MulterUpload.single("file"),
