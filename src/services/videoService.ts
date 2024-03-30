@@ -44,4 +44,14 @@ const getVideos = async (limit: number, offset: number) => {
   });
 };
 
-export default { getVideoById, getVideoByTitle, addVideoDetails, getVideos };
+const searchByTitle = async (term: string, offset: number, limit: number) => {
+  return Prisma.videoDetails.findMany({
+    where: {
+      title: { contains: term }
+    },
+    skip: offset,
+    take: limit
+  });
+};
+
+export default { getVideoById, getVideoByTitle, addVideoDetails, getVideos, searchByTitle };

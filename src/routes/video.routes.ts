@@ -18,5 +18,6 @@ router.post(
   VideoController.addVideo
 );
 router.get("/:id/play", VideoController.sendVideoStream);
+router.post("/search", VideoController.searchVideos);
 
 export default router;
