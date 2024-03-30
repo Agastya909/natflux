@@ -36,13 +36,11 @@ function getRandomThumbnail(req: Request, res: Response, next: NextFunction) {
 
 function getFileMetaData(req: Request, res: Response, next: NextFunction) {
   const filePath = res.locals.filePath;
-  console.log(filePath);
   if (!filePath) return res.status(500).send("Get file meta data: File path error");
   ffmpeg.ffprobe(filePath, (error, data) => {
     if (error) res.status(500).send(MESSAGES.HTTP_RESPONSES.SERVER_ERROR);
     if (data && data.format) {
       res.locals.videoSize = data.format.size;
-      console.log(data.format);
       next();
     }
   });
