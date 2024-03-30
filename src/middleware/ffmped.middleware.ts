@@ -23,7 +23,6 @@ function getVideoDuration(req: Request, res: Response, next: NextFunction) {
 
 function getRandomThumbnail(req: Request, res: Response, next: NextFunction) {
   const filePath = res.locals.filePath;
-  console.log(filePath);
   if (!filePath) return res.status(500).send("Create Thumbnail: File path error");
   const thumbnailName = req.body.title + "_thumbnail" + ".png";
   ffmpeg({ source: filePath }).screenshot({

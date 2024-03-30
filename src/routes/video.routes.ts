@@ -5,7 +5,7 @@ import { MulterUpload } from "../utils";
 
 const router = Router();
 
-// router.use(AuthMiddleware.verifyJWT);
+router.use(AuthMiddleware.verifyJWT);
 
 router.get("/home", VideoController.getHomeFeed);
 
