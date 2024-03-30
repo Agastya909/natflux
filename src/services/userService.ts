@@ -3,11 +3,12 @@ const Prisma = new PrismaClient();
 
 type getUsersParam = { start?: number; end?: number };
 type UpdateUserParam = {
-  email: string;
+  id: string;
 } & (
   | { type: "updateEmail"; newEmail: string }
   | { type: "updateName"; newName: string }
   | { type: "updatePassword"; newHash: string }
+  | { type: "updatePfp"; newPfp: string }
 );
 
 async function getUserById(id: string) {
@@ -27,13 +28,14 @@ async function getUsers(body: getUsersParam) {
 }
 
 async function updateUser(updateParams: UpdateUserParam) {
-  const { type, email } = updateParams;
+  const { type, id } = updateParams;
   let data;
   if (type === "updatePassword") data = { hash: updateParams.newHash };
   else if (type === "updateEmail") data = { email: updateParams.newEmail };
   else if (type === "updateName") data = { name: updateParams.newName };
+  else if (type === "updatePfp") data = { pfp_path: updateParams.newPfp };
   if (!data) return false;
-  return await Prisma.user.update({ where: { email: email }, data: data });
+  return await Prisma.user.update({ where: { id: id }, data: data });
 }
 
 export default { getUserById, getUsers, getUserByEmail, updateUser };

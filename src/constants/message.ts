@@ -12,7 +12,11 @@ export default {
     INCORRECT_PW: "Incorrect password, try again",
     SAME_PW: "New Password cannot be same as old password",
     COULD_NOT_UPDATE_PASSWORD: "Could not update your password, try again later",
-    PASSWORD_UPDATED: "Your password was updated"
+    PASSWORD_UPDATED: "Your password was updated",
+    NAME_UPDATED: "User's name was updated",
+    NAME_NOT_UPDATED: "Could not update user's name",
+    PFP_UPDATED: "Profile picture updated",
+    PFP_NOT_UPDATED: "Could not update the profile picture"
   },
   JWT: {
     CREATED: "Signed JWT created",

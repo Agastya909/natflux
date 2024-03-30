@@ -5,11 +5,12 @@ import { MulterUpload } from "../utils";
 
 const router = Router();
 
-router.use(AuthMiddleware.verifyJWT);
+// handle this verify middle ware for video streaming, either verify once and then play
+// router.use(AuthMiddleware.verifyJWT);
 
-router.get("/home", VideoController.getHomeFeed);
+router.get("/home", AuthMiddleware.verifyJWT, VideoController.getHomeFeed);
 
-router.get("/:id", VideoController.getVideoById, FfmpegMiddleware.getFileMetaData);
+router.get("/:id", AuthMiddleware.verifyJWT, VideoController.getVideoById, FfmpegMiddleware.getFileMetaData);
 router.post(
   "/add",
   MulterUpload.single("file"),
@@ -18,6 +19,6 @@ router.post(
   VideoController.addVideo
 );
 router.get("/:id/play", VideoController.sendVideoStream);
-router.post("/search", VideoController.searchVideos);
+router.post("/search", AuthMiddleware.verifyJWT, VideoController.searchVideos);
 
 export default router;
