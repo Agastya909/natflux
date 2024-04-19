@@ -9,8 +9,15 @@ async function getVideoById(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req.params.id) return res.status(400).send(MESSAGES.VideoData.NO_ID);
     const videoId = req.params.id;
-    const videoData = await VideoService.getVideoById(videoId);
+    let videoData = await VideoService.getVideoById(videoId);
     if (!videoData) return res.status(404).send(MESSAGES.Video.NO_VIDEO);
+    try {
+      const base64 = await Helpers.CreateImageBase64(videoData.thumbnail_path);
+      videoData = { ...videoData, thumbnail_path: base64 };
+    } catch (e) {
+      console.error("Error creating base64 for thumbnail:", e);
+      return videoData;
+    }
     res.status(200).json({ message: MESSAGES.Video.VIDEO_FOUND, data: videoData });
   } catch (error) {
     res.status(500).send(MESSAGES.HTTP_RESPONSES.SERVER_ERROR);
@@ -48,40 +55,45 @@ async function addVideo(req: Request, res: Response, next: NextFunction) {
 
 async function sendVideoStream(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req.params.id) return res.status(400).send(MESSAGES.VideoData.NO_ID);
+    if (!req.params.id) return res.status(400).send("Video ID is required.");
+
     const videoId = req.params.id;
     const videoData = await VideoService.getVideoById(videoId);
-    if (!videoData) return res.status(404).send(MESSAGES.Video.NO_VIDEO);
+    if (!videoData) return res.status(404).send("Video not found.");
 
     const { path } = videoData;
     const fileStat = fs.statSync(path);
     const fileSize = fileStat.size;
     const range = req.headers.range;
+
     if (range) {
-      const CHUNK_SIZE = 12 ** 6;
-      const start = Number(range.replace(/\D/g, ""));
-      const end = Math.min(start + CHUNK_SIZE, fileSize - 1);
-      const contentLength = end - start + 1;
-      const customHeaders = {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const CHUNK_SIZE = end - start + 1;
+      const fileStream = fs.createReadStream(path, { start, end });
+      const headers = {
         "Content-Range": `bytes ${start}-${end}/${fileSize}`,
         "Accept-Ranges": "bytes",
-        "Content-Length": contentLength,
+        "Content-Length": CHUNK_SIZE,
         "Content-Type": "video/mp4"
       };
-      const fileStream = fs.createReadStream(path);
+      console.log(headers);
+      res.writeHead(206, headers); 
       fileStream.pipe(res);
-      res.writeHead(206, customHeaders);
     } else {
-      const customHeaders = {
-        "Accept-Ranges": "bytes",
-        "Content-Type": "video/mp4"
+      const headers = {
+        "Content-Length": fileSize,
+        "Content-Type": "video/mp4",
+        "Accept-Ranges": "bytes"
       };
-      const fileStream = fs.createReadStream(path);
-      res.writeHead(206, customHeaders);
-      fileStream.pipe(res);
+
+      res.writeHead(200, headers);
+      fs.createReadStream(path).pipe(res);
     }
   } catch (error) {
-    res.status(500).send(MESSAGES.Video.ERROR);
+    console.error(error);
+    res.status(500).send("Internal Server Error");
   }
 }
 
@@ -108,8 +120,8 @@ const getHomeFeed = async (req: Request, res: Response, next: NextFunction) => {
 
 const searchVideos = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { searchTerm, limit, offset } = req.body;
-    let videoData = await VideoService.searchByTitle(searchTerm, offset, limit);
+    const { searchTerm = "", limit, offset, genre = "" } = req.body;
+    let videoData = await VideoService.searchByTitleAndGenre(genre, searchTerm, offset, limit);
     videoData = await Promise.all(
       videoData.map(async (element, index) => {
         try {
