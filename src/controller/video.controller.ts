@@ -7,7 +7,7 @@ import { Helpers } from "../utils/index";
 
 async function getVideoById(req: Request, res: Response, next: NextFunction) {
   try {
-    if (req.params.id) return res.status(400).send(MESSAGES.VideoData.NO_ID);
+    if (!req.params.id) return res.status(400).send(MESSAGES.VideoData.NO_ID);
     const videoId = req.params.id;
     const videoData = await VideoService.getVideoById(videoId);
     if (!videoData) return res.status(404).send(MESSAGES.Video.NO_VIDEO);
